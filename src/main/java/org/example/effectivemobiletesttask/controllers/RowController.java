@@ -47,7 +47,7 @@ public class RowController {
                 .path("/{id}")
                 .buildAndExpand(row.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(new RowResponse(row));
+        return ResponseEntity.created(location).body(RowResponse.fromRow(row));
     }
 
     @PatchMapping("/change-status")
@@ -62,7 +62,7 @@ public class RowController {
         JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
         request.setLogin(authentication.getName());
         Row row = rowService.changeStatus(request);
-        return ResponseEntity.ok(new RowResponse(row));
+        return ResponseEntity.ok(RowResponse.fromRow(row));
     }
 
     @PatchMapping("/update-row")
@@ -77,7 +77,7 @@ public class RowController {
         JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
         request.setLogin(authentication.getName());
         Row row = rowService.changeRow(request);
-        return ResponseEntity.ok(new RowResponse(row));
+        return ResponseEntity.ok(RowResponse.fromRow(row));
     }
 
     @DeleteMapping
@@ -108,6 +108,6 @@ public class RowController {
             @Valid @ModelAttribute @Parameter(description = "Параметры пагинации.") PaginationParams paginationParams) throws Exception {
         Pageable pageable = pageableCreator.create(paginationParams);
         Page<Row> rows = rowService.getRowsByUserLogin(login, pageable);
-        return ResponseEntity.ok(rows.map(RowResponse::new));
+        return ResponseEntity.ok(rows.map(RowResponse::fromRow));
     }
 }

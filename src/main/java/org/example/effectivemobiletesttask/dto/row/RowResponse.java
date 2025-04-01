@@ -3,6 +3,7 @@ package org.example.effectivemobiletesttask.dto.row;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.example.effectivemobiletesttask.dto.comment.CommentResponse;
+import org.example.effectivemobiletesttask.entities.Priority;
 import org.example.effectivemobiletesttask.entities.Row;
 import org.example.effectivemobiletesttask.entities.Status;
 
@@ -27,14 +28,32 @@ public class RowResponse {
     @Schema(description = "Комментарии к задаче.")
     private Set<CommentResponse> comments;
 
-    public RowResponse(Row row) {
-        this.title = row.getTitle();
-        this.description = row.getDescription();
-        this.author = row.getAuthor().getLogin();
-        this.supplier = row.getSupplier().getLogin();
-        this.status = row.getStatus();
-        this.priority = row.getPriority().toString();
-        this.comments = row.getComments().stream()
+    public static RowResponse fromRow(Row row) {
+        RowResponse responseObject = new RowResponse();
+        setFieldsFromIssue(row, responseObject);
+        return responseObject;
+    }
+
+    private void setPriority(Priority priority){
+        this.priority = priority.toString();
+    }
+
+    private static void setFieldsFromIssue(Row issue, RowResponse responseObject) {
+        String title = issue.getTitle();
+
+        responseObject.setTitle(title);
+        responseObject.setDescription(issue.getDescription());
+        responseObject.setAuthor(issue.getLoginAuthor());
+        responseObject.setSupplier(issue.getLoginSupplier());
+        responseObject.setStatus(issue.getStatus());
+        responseObject.setPriority(issue.getPriority());
+
+        setCommentsFromIssue(issue, responseObject);
+    }
+
+    private static void setCommentsFromIssue(Row issue, RowResponse responseObject) {
+        String title = issue.getTitle();
+        responseObject.comments = issue.getComments().stream()
                 .map(comment -> new CommentResponse(title, comment.getText()))
                 .collect(Collectors.toSet());
     }

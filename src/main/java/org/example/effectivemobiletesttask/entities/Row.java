@@ -35,4 +35,12 @@ public class Row {
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "row", cascade = CascadeType.ALL)
     private Set<Comment> comments = new HashSet<>();
+
+    public String getLoginAuthor(){
+        return author.getLogin();
+    }
+
+    public String getLoginSupplier(){
+        return supplier.getLogin();
+    }
 }

@@ -25,6 +25,4 @@ public class User {
     
     @OneToMany
     private Set<Row> rows = new HashSet<>();
-    
-    
 }
