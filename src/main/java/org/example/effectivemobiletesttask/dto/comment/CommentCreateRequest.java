@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.example.effectivemobiletesttask.entities.Comment;
+import org.example.effectivemobiletesttask.entities.Row;
 
 @Data
 @Schema(description = "Схема запроса на добавление комментария к записи.")
@@ -15,9 +16,10 @@ public class CommentCreateRequest {
     @Schema(description = "Текст комментария.", example = "Положительный комментарий!)")
     private String comment;
     
-    public Comment from(){
+    public static Comment toCommentFromRowAndCommentCreateRequest(CommentCreateRequest commentCreateRequest, Row row) {
         Comment comment = new Comment();
-        comment.setText(this.comment);
+        comment.setText(commentCreateRequest.getComment());
+        comment.setRow(row);
         return comment;
     }
 }

@@ -52,9 +52,8 @@ public class RowResponse {
     }
 
     private static void setCommentsFromIssue(Row issue, RowResponse responseObject) {
-        String title = issue.getTitle();
         responseObject.comments = issue.getComments().stream()
-                .map(comment -> new CommentResponse(title, comment.getText()))
+                .map(comment -> CommentResponse.fromRowAndComment(issue, comment))
                 .collect(Collectors.toSet());
     }
 }

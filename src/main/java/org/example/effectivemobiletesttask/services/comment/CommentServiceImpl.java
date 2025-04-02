@@ -21,9 +21,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Comment createComment(CommentCreateRequest request) throws Exception {
-        Row row = rowService.getByTitle(request.getRowTitle());
-        Comment comment = request.from();
-        comment.setRow(row);
+        String issueTitle = request.getRowTitle();
+        Row row = rowService.getByTitle(issueTitle);
+        Comment comment = CommentCreateRequest.toCommentFromRowAndCommentCreateRequest(request, row);
         rowRepository.save(row);
         return commentRepository.save(comment);
     }

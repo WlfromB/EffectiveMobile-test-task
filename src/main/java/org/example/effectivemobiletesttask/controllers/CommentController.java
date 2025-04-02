@@ -39,6 +39,7 @@ public class CommentController {
                 .path("/{id}")
                 .buildAndExpand(comment.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(new CommentResponse(comment.getText(), comment.getRow().getTitle()));
+        return ResponseEntity.created(location)
+                .body(CommentResponse.fromRowAndComment(comment.getRow(), comment));
     } 
 }
