@@ -11,9 +11,17 @@ public class UserResponse {
     private String login;
     @Schema(description = "Email пользователя.", example = "Olezhka@gmail.com")
     private String email;
-    
-    public UserResponse(User user) {
-        this.login = user.getLogin();
-        this.email = user.getEmail();
+
+    public static UserResponse fromUser(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setDataFromUser(user);
+        return userResponse;
+    }
+
+    public void setDataFromUser(User user) {
+        String userLogin = user.getLogin();
+        String userEmail = user.getEmail();
+        this.setLogin(userLogin);
+        this.setEmail(userEmail);
     }
 }

@@ -3,7 +3,7 @@ package org.example.effectivemobiletesttask.services.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.effectivemobiletesttask.dao.UserRepository;
-import org.example.effectivemobiletesttask.dto.user.UserRequestCreate;
+import org.example.effectivemobiletesttask.dto.user.UserCreateRequest;
 import org.example.effectivemobiletesttask.entities.User;
 import org.example.effectivemobiletesttask.security.PasswordProvider;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     
     @Override
     @Transactional
-    public User createUser(UserRequestCreate requestCreate) throws Exception {
+    public User createUser(UserCreateRequest requestCreate) throws Exception {
         if(userRepository.findUserByEmailOrLogin(requestCreate.getEmail(), requestCreate.getLogin()).isPresent()) {
             throw new IllegalArgumentException("User with login " + requestCreate.getLogin() + " already exists");
         }

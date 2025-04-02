@@ -40,13 +40,18 @@ public class RowResponse {
 
     private static void setFieldsFromIssue(Row issue, RowResponse responseObject) {
         String title = issue.getTitle();
+        String description = issue.getDescription();
+        String loginAuthor = issue.getLoginAuthor();
+        String loginSupplier = issue.getLoginSupplier();
+        Status issueStatus = issue.getStatus();
+        Priority issuePriority = issue.getPriority();
 
         responseObject.setTitle(title);
-        responseObject.setDescription(issue.getDescription());
-        responseObject.setAuthor(issue.getLoginAuthor());
-        responseObject.setSupplier(issue.getLoginSupplier());
-        responseObject.setStatus(issue.getStatus());
-        responseObject.setPriority(issue.getPriority());
+        responseObject.setDescription(description);
+        responseObject.setAuthor(loginAuthor);
+        responseObject.setSupplier(loginSupplier);
+        responseObject.setStatus(issueStatus);
+        responseObject.setPriority(issuePriority);
 
         setCommentsFromIssue(issue, responseObject);
     }

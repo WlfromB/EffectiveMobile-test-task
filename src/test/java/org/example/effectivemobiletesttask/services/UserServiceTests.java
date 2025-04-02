@@ -1,7 +1,7 @@
 package org.example.effectivemobiletesttask.services;
 
 import org.example.effectivemobiletesttask.dao.UserRepository;
-import org.example.effectivemobiletesttask.dto.user.UserRequestCreate;
+import org.example.effectivemobiletesttask.dto.user.UserCreateRequest;
 import org.example.effectivemobiletesttask.entities.User;
 import org.example.effectivemobiletesttask.security.PasswordProvider;
 import org.example.effectivemobiletesttask.services.user.UserServiceImpl;
@@ -40,7 +40,7 @@ class UserServiceTests {
 
     @Test
     void createUser_ValidRequest_ShouldReturnSavedUser() throws Exception {
-        UserRequestCreate requestCreate = mock(UserRequestCreate.class);
+        UserCreateRequest requestCreate = mock(UserCreateRequest.class);
         User user = new User();
         when(requestCreate.from()).thenReturn(user);
         when(passwordProvider.getPassword(requestCreate.getPassword())).thenReturn("hashedPassword");
@@ -55,7 +55,7 @@ class UserServiceTests {
 
     @Test
     void createUser_UserAlreadyExists_ShouldThrowIllegalArgumentException() {
-        UserRequestCreate requestCreate = new UserRequestCreate();
+        UserCreateRequest requestCreate = new UserCreateRequest();
         requestCreate.setEmail("existingEmail@example.com");
         requestCreate.setLogin("existingLogin");
         when(userRepository.findUserByEmailOrLogin(requestCreate.getEmail(), requestCreate.getLogin()))

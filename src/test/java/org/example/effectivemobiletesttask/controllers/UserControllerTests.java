@@ -1,7 +1,7 @@
 package org.example.effectivemobiletesttask.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.effectivemobiletesttask.dto.user.UserRequestCreate;
+import org.example.effectivemobiletesttask.dto.user.UserCreateRequest;
 import org.example.effectivemobiletesttask.entities.User;
 import org.example.effectivemobiletesttask.pagination.PageableCreator;
 import org.example.effectivemobiletesttask.pagination.PaginationParams;
@@ -54,7 +54,7 @@ public class UserControllerTests {
 
     @Test
     void createUserShouldReturnCreated() throws Exception {
-        UserRequestCreate requestCreate = new UserRequestCreate();
+        UserCreateRequest requestCreate = new UserCreateRequest();
         requestCreate.setEmail("olezhka@gmail.com");
         requestCreate.setPassword("best1password");
         requestCreate.setLogin("Olezhka");
@@ -77,7 +77,7 @@ public class UserControllerTests {
 
     @Test
     void createUserShouldReturnBadRequestForInvalidInput() throws Exception {
-        UserRequestCreate requestCreate = new UserRequestCreate();
+        UserCreateRequest requestCreate = new UserCreateRequest();
 
         mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)

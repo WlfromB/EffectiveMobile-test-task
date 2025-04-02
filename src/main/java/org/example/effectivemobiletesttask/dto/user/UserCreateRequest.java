@@ -11,7 +11,7 @@ import org.example.effectivemobiletesttask.entities.User;
 @Data
 @RequiredArgsConstructor
 @Schema(description = "Запрос на создание пользователя.")
-public class UserRequestCreate {
+public class UserCreateRequest {
     @NotBlank(message = "Логин не может быть пустым. Минимальный (кол-во символов) - 5, максимальный - 20")
     @Size(min = 5, max = 20)
     @Schema(description = "Логин пользователя.", example = "Olezhka")
@@ -27,10 +27,16 @@ public class UserRequestCreate {
     @Schema(description = "Пароль пользователя.", example = "best1password")
     private String password;
     
-    public User from(){
+    public static User fromUserCreateRequest(UserCreateRequest request) {
         User user = new User();
-        user.setLogin(login);
-        user.setEmail(email);
+        setDataToUserFromCreateRequest(user, request);
         return user;
+    }
+
+    public static void setDataToUserFromCreateRequest(User user, UserCreateRequest request) {
+        String loginFromRequest = request.getLogin();
+        String emailFromRequest = request.getEmail();
+        user.setLogin(loginFromRequest);
+        user.setEmail(emailFromRequest);
     }
 }

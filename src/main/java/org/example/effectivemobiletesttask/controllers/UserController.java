@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.example.effectivemobiletesttask.dto.user.UserRequestCreate;
+import org.example.effectivemobiletesttask.dto.user.UserCreateRequest;
 import org.example.effectivemobiletesttask.dto.user.UserResponse;
 import org.example.effectivemobiletesttask.entities.User;
 import org.example.effectivemobiletesttask.pagination.PageableCreator;
@@ -34,7 +34,7 @@ public class UserController {
             summary = "Создание пользователя.",
             description = "Позволяет создать пользователя. Не требует авторизации."
     )
-    public ResponseEntity<String> createUser(@Valid @RequestBody UserRequestCreate requestCreate) throws Exception {
+    public ResponseEntity<String> createUser(@Valid @RequestBody UserCreateRequest requestCreate) throws Exception {
         User savedUser = userService.createUser(requestCreate);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -53,7 +53,7 @@ public class UserController {
             @Valid @ModelAttribute @Parameter(description = "Параметры пагинации.") PaginationParams paginationParams)
             throws Exception {
         Pageable pageable = pageableCreator.create(paginationParams);
-        return ResponseEntity.ok(userService.findAll(pageable).map(UserResponse::new));
+        return ResponseEntity.ok(userService.findAll(pageable).map(UserResponse::fromUser));
     }
 
     @GetMapping
@@ -64,7 +64,7 @@ public class UserController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<UserResponse> getUserById(@Valid @RequestParam @Min(1) @Parameter(description = "Id пользователя", example = "1") Long id) throws Exception {
         User user = userService.findById(id);
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(UserResponse.fromUser(user));
     }
 
     @GetMapping("/login")
@@ -75,6 +75,6 @@ public class UserController {
     @SecurityRequirement(name = "JWT")
     public ResponseEntity<UserResponse> getUserByLogin(@RequestParam @Parameter(description = "Login пользователя", example = "Olezhka") String login) throws Exception {
         User user = userService.findByLogin(login);
-        return ResponseEntity.ok(new UserResponse(user));
+        return ResponseEntity.ok(UserResponse.fromUser(user));
     }
 }
