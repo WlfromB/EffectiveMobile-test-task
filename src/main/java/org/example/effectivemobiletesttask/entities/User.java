@@ -24,5 +24,5 @@ public class User {
     private String email;    
     
     @OneToMany
-    private Set<Row> rows = new HashSet<>();
+    private Set<Issue> issues = new HashSet<>();
 }

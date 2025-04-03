@@ -7,12 +7,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.effectivemobiletesttask.dto.row.*;
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.dto.issue.*;
+import org.example.effectivemobiletesttask.entities.Issue;
 import org.example.effectivemobiletesttask.pagination.PageableCreator;
 import org.example.effectivemobiletesttask.pagination.PaginationParams;
 import org.example.effectivemobiletesttask.security.JwtAuthentication;
-import org.example.effectivemobiletesttask.services.row.RowService;
+import org.example.effectivemobiletesttask.services.row.IssueService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +24,11 @@ import java.net.URI;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/row")
+@RequestMapping("/issue")
 @Tag(name = "Методы работы с задачами.")
 @Slf4j
-public class RowController {
-    private final RowService rowService;
+public class IssueController {
+    private final IssueService issueService;
     private final PageableCreator pageableCreator;
 
     @PostMapping
@@ -37,17 +37,17 @@ public class RowController {
             description = "Позволяет создать задачу. Требует авторизации."
     )
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<RowResponse> addRow(
-            @Valid @RequestBody RowCreateRequest request) throws Exception {
+    public ResponseEntity<IssueResponse> addIssue(
+            @Valid @RequestBody IssueCreateRequest request) throws Exception {
         JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
         request.setAuthorLogin(authentication.getName());
-        Row row = rowService.createRow(request);
+        Issue issue = issueService.createIssue(request);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(row.getId())
+                .buildAndExpand(issue.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(RowResponse.fromRow(row));
+        return ResponseEntity.created(location).body(IssueResponse.fromIssue(issue));
     }
 
     @PatchMapping("/change-status")
@@ -57,27 +57,27 @@ public class RowController {
                     "Может быть использовано автором задачи или ее исполнителем."
     )
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<RowResponse> changeStatus(
-            @Valid @RequestBody RowChangeStatusRequest request) throws Exception {
+    public ResponseEntity<IssueResponse> changeStatus(
+            @Valid @RequestBody IssueChangeStatusRequest request) throws Exception {
         JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
         request.setLogin(authentication.getName());
-        Row row = rowService.changeStatus(request);
-        return ResponseEntity.ok(RowResponse.fromRow(row));
+        Issue issue = issueService.changeStatus(request);
+        return ResponseEntity.ok(IssueResponse.fromIssue(issue));
     }
 
-    @PatchMapping("/update-row")
+    @PatchMapping("/update-issue")
     @Operation(
             summary = "Изменение данных задачи.",
             description = "Позволяет изменить данные задачи. Требует авторизации. " +
                     "Может быть использовано только автором задачи."
     )
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<RowResponse> updateRow(
-            @Valid @RequestBody RowChangeRequest request) throws Exception {
+    public ResponseEntity<IssueResponse> updateIssue(
+            @Valid @RequestBody IssueChangeRequest request) throws Exception {
         JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
         request.setLogin(authentication.getName());
-        Row row = rowService.changeRow(request);
-        return ResponseEntity.ok(RowResponse.fromRow(row));
+        Issue issue = issueService.changeIssue(request);
+        return ResponseEntity.ok(IssueResponse.fromIssue(issue));
     }
 
     @DeleteMapping
@@ -87,13 +87,12 @@ public class RowController {
                     "Может быть использовано только автором задачи."
     )
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<String> deleteRow(
-            @Valid @RequestBody RowDeleteRequest request) throws Exception {
+    public ResponseEntity<String> deleteIssue(
+            @Valid @RequestBody IssueDeleteRequest request) throws Exception {
         JwtAuthentication authentication = (JwtAuthentication) SecurityContextHolder.getContext().getAuthentication();
         request.setAuthor(authentication.getName());
-        System.out.println("before");
-        rowService.deleteRow(request);
-        return ResponseEntity.ok("Row successfully deleted");
+        issueService.deleteIssue(request);
+        return ResponseEntity.ok("Issue successfully deleted");
     }
 
     @GetMapping
@@ -103,11 +102,11 @@ public class RowController {
                     "Может быть использовано любым авторизованным пользователем."
     )
     @SecurityRequirement(name = "JWT")
-    public ResponseEntity<Page<RowResponse>> getByAuthorOrSupplierLogin(
+    public ResponseEntity<Page<IssueResponse>> getByAuthorOrSupplierLogin(
             @Valid @RequestParam(name = "user-login") @Parameter(description = "Логин пользователя", example = "author") String login,
             @Valid @ModelAttribute @Parameter(description = "Параметры пагинации.") PaginationParams paginationParams) throws Exception {
         Pageable pageable = pageableCreator.create(paginationParams);
-        Page<Row> rows = rowService.getRowsByUserLogin(login, pageable);
-        return ResponseEntity.ok(rows.map(RowResponse::fromRow));
+        Page<Issue> issues = issueService.getIssuesByUserLogin(login, pageable);
+        return ResponseEntity.ok(issues.map(IssueResponse::fromIssue));
     }
 }

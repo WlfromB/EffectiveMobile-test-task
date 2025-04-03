@@ -1,4 +1,4 @@
-package org.example.effectivemobiletesttask.dto.row;
+package org.example.effectivemobiletesttask.dto.issue;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "Запрос на удаление задачи.")
-public class RowDeleteRequest {
+public class IssueDeleteRequest {
     @Hidden
     @Schema(description = "Логин пользователя-автора. Заполнение произойдет из security context.")
     private String author;

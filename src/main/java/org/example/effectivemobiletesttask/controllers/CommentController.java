@@ -40,6 +40,6 @@ public class CommentController {
                 .buildAndExpand(comment.getId())
                 .toUri();
         return ResponseEntity.created(location)
-                .body(CommentResponse.fromRowAndComment(comment.getRow(), comment));
+                .body(CommentResponse.fromRowAndComment(comment.getIssue(), comment));
     } 
 }

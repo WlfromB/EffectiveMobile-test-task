@@ -1,12 +1,12 @@
 package org.example.effectivemobiletesttask.services;
 
 import org.example.effectivemobiletesttask.dao.CommentRepository;
-import org.example.effectivemobiletesttask.dao.RowRepository;
+import org.example.effectivemobiletesttask.dao.IssueRepository;
 import org.example.effectivemobiletesttask.dto.comment.CommentCreateRequest;
 import org.example.effectivemobiletesttask.entities.Comment;
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.entities.Issue;
 import org.example.effectivemobiletesttask.services.comment.CommentServiceImpl;
-import org.example.effectivemobiletesttask.services.row.RowService;
+import org.example.effectivemobiletesttask.services.row.IssueService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,10 +24,10 @@ public class CommentServiceTests {
     private CommentRepository commentRepository;
 
     @Mock
-    private RowService rowService;
+    private IssueService issueService;
 
     @Mock
-    private RowRepository rowRepository;
+    private IssueRepository issueRepository;
 
     @InjectMocks
     private CommentServiceImpl commentService;
@@ -44,14 +44,14 @@ public class CommentServiceTests {
         request.setRowTitle(rowTitle);
         request.setComment("Test Content");
 
-        Row row = new Row();
-        row.setTitle(rowTitle);
+        Issue issue = new Issue();
+        issue.setTitle(rowTitle);
 
         Comment comment = new Comment();
         comment.setText("Test Content");
-        comment.setRow(row);
+        comment.setIssue(issue);
 
-        when(rowService.getByTitle(rowTitle)).thenReturn(row);
+        when(issueService.getByTitle(rowTitle)).thenReturn(issue);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
 
@@ -59,11 +59,11 @@ public class CommentServiceTests {
         
         assertNotNull(result);
         assertEquals("Test Content", result.getText());
-        assertEquals(rowTitle, result.getRow().getTitle());
+        assertEquals(rowTitle, result.getIssue().getTitle());
 
-        verify(rowService).getByTitle(rowTitle);
+        verify(issueService).getByTitle(rowTitle);
         verify(commentRepository).save(any(Comment.class));
-        verify(rowRepository).save(row);
+        verify(issueRepository).save(issue);
     }
 
     @Test
@@ -72,12 +72,12 @@ public class CommentServiceTests {
         CommentCreateRequest request = new CommentCreateRequest();
         request.setRowTitle(rowTitle);
 
-        when(rowService.getByTitle(rowTitle)).thenThrow(new NotFoundException("Row not found"));
+        when(issueService.getByTitle(rowTitle)).thenThrow(new NotFoundException("Row not found"));
         
         assertThrows(NotFoundException.class, () -> commentService.createComment(request));
 
-        verify(rowService).getByTitle(rowTitle);
+        verify(issueService).getByTitle(rowTitle);
         verifyNoInteractions(commentRepository);
-        verifyNoInteractions(rowRepository);
+        verifyNoInteractions(issueRepository);
     }
 }

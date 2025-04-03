@@ -9,7 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "rows")
 @Data
-public class Row {
+public class Issue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

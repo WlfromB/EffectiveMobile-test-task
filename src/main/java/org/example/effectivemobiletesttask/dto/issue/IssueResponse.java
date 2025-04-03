@@ -1,10 +1,10 @@
-package org.example.effectivemobiletesttask.dto.row;
+package org.example.effectivemobiletesttask.dto.issue;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.example.effectivemobiletesttask.dto.comment.CommentResponse;
 import org.example.effectivemobiletesttask.entities.Priority;
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.entities.Issue;
 import org.example.effectivemobiletesttask.entities.Status;
 
 import java.util.Set;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Schema(description = "Ответ API для запросов задач.")
-public class RowResponse {
+public class IssueResponse {
     @Schema(description = "Название задачи.", example = "Название задачи.")
     private String title;
     @Schema(description = "Описание задачи.", example = "Описание задачи.")
@@ -28,9 +28,9 @@ public class RowResponse {
     @Schema(description = "Комментарии к задаче.")
     private Set<CommentResponse> comments;
 
-    public static RowResponse fromRow(Row row) {
-        RowResponse responseObject = new RowResponse();
-        setFieldsFromIssue(row, responseObject);
+    public static IssueResponse fromIssue(Issue issue) {
+        IssueResponse responseObject = new IssueResponse();
+        setFieldsFromIssue(issue, responseObject);
         return responseObject;
     }
 
@@ -38,7 +38,7 @@ public class RowResponse {
         this.priority = priority.toString();
     }
 
-    private static void setFieldsFromIssue(Row issue, RowResponse responseObject) {
+    private static void setFieldsFromIssue(Issue issue, IssueResponse responseObject) {
         String title = issue.getTitle();
         String description = issue.getDescription();
         String loginAuthor = issue.getLoginAuthor();
@@ -56,7 +56,7 @@ public class RowResponse {
         setCommentsFromIssue(issue, responseObject);
     }
 
-    private static void setCommentsFromIssue(Row issue, RowResponse responseObject) {
+    private static void setCommentsFromIssue(Issue issue, IssueResponse responseObject) {
         responseObject.comments = issue.getComments().stream()
                 .map(comment -> CommentResponse.fromRowAndComment(issue, comment))
                 .collect(Collectors.toSet());

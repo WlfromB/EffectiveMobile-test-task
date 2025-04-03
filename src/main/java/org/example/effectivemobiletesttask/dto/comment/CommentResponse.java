@@ -1,10 +1,9 @@
 package org.example.effectivemobiletesttask.dto.comment;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
 import lombok.Getter;
 import org.example.effectivemobiletesttask.entities.Comment;
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.entities.Issue;
 
 @Getter
 @Schema(description = "Вид ответа API для запросов комментариев.")
@@ -16,15 +15,15 @@ public class CommentResponse {
 
     public CommentResponse() {}
 
-    public static CommentResponse fromRowAndComment(Row row, Comment comment) {
+    public static CommentResponse fromRowAndComment(Issue issue, Comment comment) {
         CommentResponse responseObject = new CommentResponse();
-        responseObject.setRowTitle(row);
+        responseObject.setRowTitle(issue);
         responseObject.setComment(comment);
         return responseObject;
     }
 
-    public void setRowTitle(Row row) {
-        this.rowTitle = row.getTitle();
+    public void setRowTitle(Issue issue) {
+        this.rowTitle = issue.getTitle();
     }
 
     public void setComment(Comment comment) {

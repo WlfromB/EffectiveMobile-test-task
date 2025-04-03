@@ -1,18 +1,18 @@
 package org.example.effectivemobiletesttask.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.effectivemobiletesttask.dto.row.RowChangeRequest;
-import org.example.effectivemobiletesttask.dto.row.RowChangeStatusRequest;
-import org.example.effectivemobiletesttask.dto.row.RowCreateRequest;
-import org.example.effectivemobiletesttask.dto.row.RowDeleteRequest;
+import org.example.effectivemobiletesttask.dto.issue.IssueChangeRequest;
+import org.example.effectivemobiletesttask.dto.issue.IssueChangeStatusRequest;
+import org.example.effectivemobiletesttask.dto.issue.IssueCreateRequest;
+import org.example.effectivemobiletesttask.dto.issue.IssueDeleteRequest;
 import org.example.effectivemobiletesttask.entities.Priority;
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.entities.Issue;
 import org.example.effectivemobiletesttask.entities.Status;
 import org.example.effectivemobiletesttask.entities.User;
 import org.example.effectivemobiletesttask.pagination.PageableCreator;
 import org.example.effectivemobiletesttask.pagination.PaginationParams;
 import org.example.effectivemobiletesttask.services.auth.JwtProvider;
-import org.example.effectivemobiletesttask.services.row.RowService;
+import org.example.effectivemobiletesttask.services.row.IssueService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,13 +34,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RowControllerTests {
+public class IssueControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private RowService rowService;
+    private IssueService issueService;
 
     @MockBean
     private PageableCreator pageableCreator;
@@ -54,7 +54,7 @@ public class RowControllerTests {
 
     @Test
     void addRowShouldReturnCreated() throws Exception {
-        RowCreateRequest requestCreate = new RowCreateRequest();
+        IssueCreateRequest requestCreate = new IssueCreateRequest();
         requestCreate.setTitle("Название задачи.");
         requestCreate.setDescription("Описание задачи.");
         requestCreate.setPriority("HIGH");
@@ -70,15 +70,15 @@ public class RowControllerTests {
         savedSup.setPassword("best1password");
         savedSup.setEmail("olezhka@gmail.com");
         savedSup.setLogin("Olezhka");
-        Row row = new Row();
-        row.setId(1L);
-        row.setAuthor(savedUser);
-        row.setSupplier(savedSup);
-        row.setTitle("Название задачи.");
-        row.setDescription("Описание задачи.");
-        row.setPriority(Priority.valueOf("HIGH"));
-        row.setStatus(Status.valueOf("WAIT"));
-        when(rowService.createRow(requestCreate)).thenReturn(row);
+        Issue issue = new Issue();
+        issue.setId(1L);
+        issue.setAuthor(savedUser);
+        issue.setSupplier(savedSup);
+        issue.setTitle("Название задачи.");
+        issue.setDescription("Описание задачи.");
+        issue.setPriority(Priority.valueOf("HIGH"));
+        issue.setStatus(Status.valueOf("WAIT"));
+        when(issueService.createIssue(requestCreate)).thenReturn(issue);
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -88,14 +88,14 @@ public class RowControllerTests {
                         .header("Authorization", token))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/row/1"))
-                .andExpect(jsonPath("$.title").value(row.getTitle()));
+                .andExpect(jsonPath("$.title").value(issue.getTitle()));
 
-        verify(rowService).createRow(requestCreate);
+        verify(issueService).createIssue(requestCreate);
     }
 
     @Test
     void addRowShouldReturnBadRequestForInvalidInput() throws Exception {
-        RowCreateRequest requestCreate = new RowCreateRequest();
+        IssueCreateRequest requestCreate = new IssueCreateRequest();
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -114,7 +114,7 @@ public class RowControllerTests {
 
     @Test
     void changeStatusShouldReturnOk() throws Exception {
-        RowChangeStatusRequest request = new RowChangeStatusRequest();
+        IssueChangeStatusRequest request = new IssueChangeStatusRequest();
         request.setTitle("Название задачи.");
         request.setStatus("WAIT");
 
@@ -129,14 +129,14 @@ public class RowControllerTests {
         suppl.setEmail("olezhka@gmail.com");
         suppl.setLogin("Olezhka");
 
-        Row row = new Row();
-        row.setId(1L);
-        row.setAuthor(savedUser);
-        row.setSupplier(suppl);
-        row.setPriority(Priority.valueOf("HIGH"));
-        row.setStatus(Status.valueOf("WAIT"));
+        Issue issue = new Issue();
+        issue.setId(1L);
+        issue.setAuthor(savedUser);
+        issue.setSupplier(suppl);
+        issue.setPriority(Priority.valueOf("HIGH"));
+        issue.setStatus(Status.valueOf("WAIT"));
 
-        when(rowService.changeStatus(request)).thenReturn(row);
+        when(issueService.changeStatus(request)).thenReturn(issue);
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -145,14 +145,14 @@ public class RowControllerTests {
                         .content(objectMapper.writeValueAsString(request))
                         .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(row.getTitle()));
+                .andExpect(jsonPath("$.title").value(issue.getTitle()));
 
-        verify(rowService).changeStatus(request);
+        verify(issueService).changeStatus(request);
     }
 
     @Test
     void changeStatusShouldReturnBadRequestForInvalidInput() throws Exception {
-        RowChangeStatusRequest request = new RowChangeStatusRequest();
+        IssueChangeStatusRequest request = new IssueChangeStatusRequest();
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
         mockMvc.perform(patch("/row/change-status")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -169,7 +169,7 @@ public class RowControllerTests {
 
     @Test
     void updateRowShouldReturnOk() throws Exception {
-        RowChangeRequest request = new RowChangeRequest();
+        IssueChangeRequest request = new IssueChangeRequest();
         request.setTitle("Название задачи.");
         request.setStatus("WAIT");
         request.setPriority("HIGH");
@@ -185,16 +185,16 @@ public class RowControllerTests {
         savedSup.setEmail("olezhka@gmail.com");
         savedSup.setLogin("Olezhka");
 
-        Row row = new Row();
-        row.setId(1L);
-        row.setTitle("Title");
-        row.setDescription("Описание задачи.");
-        row.setPriority(Priority.valueOf("HIGH"));
-        row.setStatus(Status.valueOf("WAIT"));
-        row.setAuthor(savedUser);
-        row.setSupplier(savedSup);
+        Issue issue = new Issue();
+        issue.setId(1L);
+        issue.setTitle("Title");
+        issue.setDescription("Описание задачи.");
+        issue.setPriority(Priority.valueOf("HIGH"));
+        issue.setStatus(Status.valueOf("WAIT"));
+        issue.setAuthor(savedUser);
+        issue.setSupplier(savedSup);
 
-        when(rowService.changeRow(request)).thenReturn(row);
+        when(issueService.changeIssue(request)).thenReturn(issue);
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -203,14 +203,14 @@ public class RowControllerTests {
                         .content(objectMapper.writeValueAsString(request))
                         .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(row.getTitle()));
+                .andExpect(jsonPath("$.title").value(issue.getTitle()));
 
-        verify(rowService).changeRow(request);
+        verify(issueService).changeIssue(request);
     }
 
     @Test
     void updateRowShouldReturnBadRequestForInvalidInput() throws Exception {
-        RowChangeRequest request = new RowChangeRequest();
+        IssueChangeRequest request = new IssueChangeRequest();
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -228,10 +228,10 @@ public class RowControllerTests {
     }
 
     @Test
-    void deleteRowShouldReturnOk() throws Exception {
-        RowDeleteRequest request = new RowDeleteRequest();
+    void deleteIssueShouldReturnOk() throws Exception {
+        IssueDeleteRequest request = new IssueDeleteRequest();
         request.setTitle("Название задачи.");
-        doNothing().when(rowService).deleteRow(request);
+        doNothing().when(issueService).deleteIssue(request);
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -242,12 +242,12 @@ public class RowControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Row successfully deleted"));
 
-        verify(rowService).deleteRow(request);
+        verify(issueService).deleteIssue(request);
     }
 
     @Test
-    void deleteRowShouldReturnBadRequestForInvalidInput() throws Exception {
-        RowDeleteRequest request = new RowDeleteRequest();
+    void deleteIssueShouldReturnBadRequestForInvalidInput() throws Exception {
+        IssueDeleteRequest request = new IssueDeleteRequest();
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
         mockMvc.perform(delete("/row")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -260,10 +260,10 @@ public class RowControllerTests {
     void getByAuthorOrSupplierLoginShouldReturnOk() throws Exception {
         PaginationParams paginationParams = new PaginationParams();
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Row> rowsPage = new PageImpl<>(List.of());
+        Page<Issue> rowsPage = new PageImpl<>(List.of());
 
         when(pageableCreator.create(paginationParams)).thenReturn(pageable);
-        when(rowService.getRowsByUserLogin("author", pageable)).thenReturn(rowsPage);
+        when(issueService.getIssuesByUserLogin("author", pageable)).thenReturn(rowsPage);
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -275,7 +275,7 @@ public class RowControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
 
-        verify(rowService).getRowsByUserLogin("author", pageable);
+        verify(issueService).getIssuesByUserLogin("author", pageable);
     }
 
     @Test
@@ -296,7 +296,7 @@ public class RowControllerTests {
         Pageable pageable = PageRequest.of(0, 10);
 
         when(pageableCreator.create(paginationParams)).thenReturn(pageable);
-        when(rowService.getRowsByUserLogin("author", pageable)).thenThrow(new NotFoundException("Not found!"));
+        when(issueService.getIssuesByUserLogin("author", pageable)).thenThrow(new NotFoundException("Not found!"));
 
         String token = "Bearer " + jwtProvider.generateAccessToken(new User());
 
@@ -307,7 +307,7 @@ public class RowControllerTests {
                         .param("size", "10"))
                 .andExpect(status().isNotFound());
 
-        verify(rowService).getRowsByUserLogin("author", pageable);
+        verify(issueService).getIssuesByUserLogin("author", pageable);
     }
 
     @Test

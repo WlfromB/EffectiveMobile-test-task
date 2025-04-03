@@ -1,4 +1,4 @@
-package org.example.effectivemobiletesttask.dto.row;
+package org.example.effectivemobiletesttask.dto.issue;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,7 @@ import org.example.effectivemobiletesttask.validation.status.ValidStatus;
 
 @Data
 @Schema(description = "Запрос на изменение данных задачи.")
-public class RowChangeRequest { 
+public class IssueChangeRequest {
     @NotBlank(message = "Не должен быть пустым. Должно быть название существующей задачи.")
     @Schema(description = "Название задачи.", example = "Название задачи.")
     private String title;

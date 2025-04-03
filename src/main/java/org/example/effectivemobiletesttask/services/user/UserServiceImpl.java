@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
         if(userRepository.findUserByEmailOrLogin(requestCreate.getEmail(), requestCreate.getLogin()).isPresent()) {
             throw new IllegalArgumentException("User with login " + requestCreate.getLogin() + " already exists");
         }
-        User user = requestCreate.from();
+        User user = UserCreateRequest.fromUserCreateRequest(requestCreate);
         user.setPassword(passwordProvider.getPassword(requestCreate.getPassword()));
         return userRepository.save(user);
     }

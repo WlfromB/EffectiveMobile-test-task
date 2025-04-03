@@ -1,6 +1,6 @@
 package org.example.effectivemobiletesttask.dao;
 
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.entities.Issue;
 import org.example.effectivemobiletesttask.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RowRepository extends JpaRepository<Row, Long> {
-    Page<Row> findAllByAuthorOrSupplier(User author, User supplier, Pageable pageable);
+public interface IssueRepository extends JpaRepository<Issue, Long> {
+    Page<Issue> findAllByAuthorOrSupplier(User author, User supplier, Pageable pageable);
 
-    Optional<Row> findByTitle(String title);
+    Optional<Issue> findByTitle(String title);
 }

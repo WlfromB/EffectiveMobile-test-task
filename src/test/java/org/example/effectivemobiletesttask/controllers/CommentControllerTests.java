@@ -3,7 +3,7 @@ package org.example.effectivemobiletesttask.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.effectivemobiletesttask.dto.comment.CommentCreateRequest;
 import org.example.effectivemobiletesttask.entities.Comment;
-import org.example.effectivemobiletesttask.entities.Row;
+import org.example.effectivemobiletesttask.entities.Issue;
 import org.example.effectivemobiletesttask.entities.User;
 import org.example.effectivemobiletesttask.services.auth.JwtProvider;
 import org.example.effectivemobiletesttask.services.comment.CommentService;
@@ -45,13 +45,13 @@ public class CommentControllerTests {
 
     @Test
     public void createComment_ShouldReturnCreated_WhenRequestIsValid() throws Exception {
-        Row row = new Row();
-        row.setTitle("Title");
+        Issue issue = new Issue();
+        issue.setTitle("Title");
         
         Comment comment = new Comment();
         comment.setId(1L);
         comment.setText("Valid Comment");
-        comment.setRow(row);
+        comment.setIssue(issue);
         
         CommentCreateRequest request = new CommentCreateRequest();
         request.setRowTitle("Valid Title");
