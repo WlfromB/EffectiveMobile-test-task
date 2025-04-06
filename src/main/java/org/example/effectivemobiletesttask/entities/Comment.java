@@ -15,7 +15,7 @@ public class Comment {
     private String text;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "row_id")
+    @JoinColumn(name = "issue_id")
     private Issue issue;
     
     public Comment() {}

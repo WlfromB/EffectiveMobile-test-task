@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "rows")
+@Table(name = "issues")
 @Data
 public class Issue {
     @Id
@@ -33,7 +33,7 @@ public class Issue {
     @JoinColumn(name = "supplier_user_id")
     private User supplier;
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "row", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "issue", cascade = CascadeType.ALL)
     private Set<Comment> comments = new HashSet<>();
 
     public String getLoginAuthor(){
