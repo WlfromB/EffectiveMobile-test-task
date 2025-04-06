@@ -12,16 +12,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.util.function.Supplier;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordProvider passwordProvider;
+
+    private Supplier<NotFoundException> throwUserNotFound(){
+        throw new NotFoundException("User not found");
+    }
     
     @Override
     @Transactional
-    public User createUser(UserCreateRequest requestCreate) throws Exception {
+    public User createUser(UserCreateRequest requestCreate) throws IllegalArgumentException {
         if(userRepository.findUserByEmailOrLogin(requestCreate.getEmail(), requestCreate.getLogin()).isPresent()) {
             throw new IllegalArgumentException("User with login " + requestCreate.getLogin() + " already exists");
         }
@@ -32,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Page<User> findAll(Pageable pageable) throws Exception {
+    public Page<User> findAll(Pageable pageable) throws NotFoundException {
         Page<User> users = userRepository.findAll(pageable);
         if (users.isEmpty()) {
             throw new NotFoundException("Page not found");
@@ -42,25 +48,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User findById(Long id) throws Exception {
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User Not Found"));
+    public User findById(Long id) throws NotFoundException {
+        return userRepository.findById(id).orElseThrow(throwUserNotFound());
     }
 
     @Override
     @Transactional
-    public User findByLogin(String login) throws Exception {
-        return userRepository.findByLogin(login).orElseThrow(() -> new NotFoundException("User Not Found"));
+    public User findByLogin(String login) throws NotFoundException {
+        return userRepository.findByLogin(login).orElseThrow(throwUserNotFound());
     }
 
     @Override
     @Transactional
-    public User findByEmail(String email) throws Exception {
-        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User Not Found"));
+    public User findByEmail(String email) throws NotFoundException {
+        return userRepository.findByEmail(email).orElseThrow(throwUserNotFound());
     }
 
     @Override
     @Transactional
-    public User findByEmailOrLogin(String emailOrLogin) throws Exception {
-        return userRepository.findUserByEmailOrLogin(emailOrLogin, emailOrLogin).orElseThrow(() -> new NotFoundException("User Not Found"));
+    public User findByEmailOrLogin(String emailOrLogin) throws NotFoundException {
+        return userRepository.findUserByEmailOrLogin(emailOrLogin, emailOrLogin).orElseThrow(throwUserNotFound());
     }
 }

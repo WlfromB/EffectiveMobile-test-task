@@ -22,6 +22,9 @@ import java.util.Set;
 @Component
 public class JwtProvider {
     private static final String defaultValue = "default";
+    private static final int EXPIRATION_ACCESS_TOKEN_TIME_IN_MINUTES = 5;
+    private static final int EXPIRATION_REFRESH_TOKEN_TIME_IN_DAYS = 30;
+    private static final LocalDateTime dateTime = LocalDateTime.now();
 
     @Value("${jwt.access-secret}")
     private String jwtAccessSecretKey;
@@ -30,10 +33,7 @@ public class JwtProvider {
     private String jwtRefreshSecretKey;
 
     public String generateAccessToken(@NonNull User user) {
-        final LocalDateTime date = LocalDateTime.now();
-        final Instant accessExprirationInstant = date.plusMinutes(5)
-                .atZone(ZoneId.systemDefault()).toInstant();
-        final Date accessExpiration = Date.from(accessExprirationInstant);
+        final Date accessExpiration = getAccessExpirationDate();
         return Jwts.builder()
                 .setSubject(user.getLogin())
                 .setExpiration(accessExpiration)
@@ -43,15 +43,32 @@ public class JwtProvider {
     }
 
     public String generateRefreshToken(@NonNull User user) {
-        final LocalDateTime date = LocalDateTime.now();
-        final Instant refreshExprirationInstant = date.plusDays(30)
-                .atZone(ZoneId.systemDefault()).toInstant();
-        final Date refreshExpiration = Date.from(refreshExprirationInstant);
+        final Date refreshExpiration = getRefreshExpirationDate();
         return Jwts.builder()
                 .setSubject(user.getLogin())
                 .setExpiration(refreshExpiration)
                 .signWith(createKey(jwtRefreshSecretKey), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private Instant getAccessExpirationInstant() {
+        return dateTime.plusMinutes(EXPIRATION_ACCESS_TOKEN_TIME_IN_MINUTES)
+                .atZone(ZoneId.systemDefault()).toInstant();
+    }
+
+    private Date getAccessExpirationDate() {
+        final Instant accessExprirationInstant = getAccessExpirationInstant();
+        return Date.from(accessExprirationInstant);
+    }
+
+    private Instant getRefreshExpirationInstant() {
+        return dateTime.plusDays(EXPIRATION_REFRESH_TOKEN_TIME_IN_DAYS)
+                .atZone(ZoneId.systemDefault()).toInstant();
+    }
+
+    private Date getRefreshExpirationDate() {
+        final Instant refreshExprirationInstant = getRefreshExpirationInstant();
+        return Date.from(refreshExprirationInstant);
     }
 
     private boolean validateToken(@NonNull String token, @NonNull String secret) {

@@ -1,5 +1,6 @@
 package org.example.effectivemobiletesttask.security;
 
+import io.jsonwebtoken.Claims;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;

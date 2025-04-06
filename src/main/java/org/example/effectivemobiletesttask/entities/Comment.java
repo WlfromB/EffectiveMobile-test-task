@@ -2,10 +2,12 @@ package org.example.effectivemobiletesttask.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Entity
 @Table(name = "comments")
 @Data
+@EnableJpaAuditing
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

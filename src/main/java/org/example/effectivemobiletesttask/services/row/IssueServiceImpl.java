@@ -85,9 +85,7 @@ public class IssueServiceImpl implements IssueService {
     @Override
     @Transactional
     public Page<Issue> getIssuesByUserLogin(String login, Pageable pageable) throws Exception {
-        log.debug("before finding {}", login);
         User user = userService.findByLogin(login);
-        log.debug("after finding {}", login);
         return issueRepository.findAllByAuthorOrSupplier(user, user, pageable);
     }
 

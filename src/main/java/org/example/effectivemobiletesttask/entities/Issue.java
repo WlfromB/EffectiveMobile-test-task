@@ -2,6 +2,7 @@ package org.example.effectivemobiletesttask.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
 @Entity
 @Table(name = "issues")
 @Data
+@EnableJpaAuditing
 public class Issue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
